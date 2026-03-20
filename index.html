@@ -963,6 +963,32 @@
         document.getElementById("sidebar").classList.toggle("collapsed");
       }
 
+      // --- PROTEÇÃO CONTRA CURIOSOS (Bloqueio de atalhos e clique direito) ---
+
+      // Bloqueia o clique com o botão direito
+      document.addEventListener("contextmenu", (event) =>
+        event.preventDefault()
+      );
+
+      // Bloqueia atalhos de teclado do DevTools
+      document.addEventListener("keydown", function (e) {
+        // Bloqueia F12
+        if (e.keyCode === 123) {
+          e.preventDefault();
+          return false;
+        }
+        // Bloqueia Ctrl+Shift+I (Inspecionar) e Ctrl+Shift+J (Console)
+        if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) {
+          e.preventDefault();
+          return false;
+        }
+        // Bloqueia Ctrl+U (Ver código-fonte)
+        if (e.ctrlKey && e.keyCode === 85) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
       // Nova Lógica de Autenticação pelo Submenu
       async function toggleRestrito(elementClicked) {
         let submenu = document.getElementById("submenu-restrito");
