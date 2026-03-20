@@ -63,7 +63,7 @@
         text-transform: uppercase;
       }
 
-      /* Menu */
+      /* Menu Principal */
       .menu {
         list-style: none;
         flex-grow: 1;
@@ -87,6 +87,24 @@
         border-left-color: var(--primary-color);
         background-color: #333;
         color: var(--primary-color);
+      }
+
+      /* Submenu Restrito */
+      .submenu {
+        display: none;
+        flex-direction: column;
+        background-color: #111;
+        border-top: 1px solid #222;
+        border-bottom: 1px solid #222;
+      }
+      .submenu li {
+        padding-left: 35px;
+        font-size: 12px;
+        border-left: 2px solid transparent;
+      }
+      .submenu li.active {
+        border-left-color: var(--primary-color);
+        background-color: #222;
       }
 
       /* Main Content */
@@ -120,22 +138,38 @@
         letter-spacing: 2px;
       }
 
-      /* Forms */
+      /* Forms - Agora com Rótulos Discretos */
       .form-stack {
         display: flex;
         flex-direction: column;
         gap: 15px;
       }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .form-group label {
+        font-size: 11px;
+        color: #aaa;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-left: 2px;
+      }
+
       .form-group input,
       .form-group select {
         width: 100%;
-        padding: 15px;
+        padding: 12px 15px;
         background-color: var(--input-bg);
         border: none;
         border-left: 4px solid transparent;
         outline: none;
         font-size: 14px;
         transition: 0.2s;
+        color: #000;
       }
       .form-group input:focus,
       .form-group select:focus {
@@ -143,14 +177,16 @@
         background-color: #fff;
       }
       ::placeholder {
-        color: #555;
-        font-weight: bold;
-        font-size: 13px;
+        color: #777;
+        font-weight: normal;
+        font-size: 12px;
+        font-style: italic;
       }
       select:invalid {
-        color: #555;
-        font-weight: bold;
-        font-size: 13px;
+        color: #777;
+        font-weight: normal;
+        font-size: 12px;
+        font-style: italic;
       }
 
       .btn-submit,
@@ -198,9 +234,9 @@
       .search-bar::placeholder {
         color: #aaa;
         font-size: 12px;
+        font-style: normal;
       }
 
-      /* Dropdowns Nativos Customizados */
       .advanced-filters {
         display: flex;
         gap: 10px;
@@ -257,6 +293,8 @@
         cursor: pointer;
         padding: 5px;
         border-radius: 3px;
+        text-transform: none;
+        font-weight: normal;
       }
       .filter-options label:hover {
         background: #444;
@@ -267,7 +305,6 @@
         height: 16px;
       }
 
-      /* Toggle Mostrar/Ocultar Colunas */
       .col-toggles {
         display: flex;
         flex-wrap: wrap;
@@ -291,7 +328,7 @@
         accent-color: var(--primary-color);
       }
 
-      /* Tables (Inventário) */
+      /* Tables */
       .table-responsive {
         overflow-x: auto;
         padding-bottom: 10px;
@@ -330,7 +367,7 @@
         color: #000;
       }
 
-      /* Cards (Contatos) */
+      /* Cards */
       .card-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -429,6 +466,14 @@
           border-left-color: transparent;
           border-bottom-color: var(--primary-color);
         }
+        .submenu {
+          position: absolute;
+          top: 50px;
+          left: 0;
+          width: 100%;
+          z-index: 200;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+        }
         .main-content {
           padding: 10px;
           padding-bottom: 90px;
@@ -468,7 +513,7 @@
             letter-spacing="2"
             transform="skewX(-10)"
           >
-            HARRY
+            RAW
           </text>
           <text
             x="50%"
@@ -482,33 +527,245 @@
             letter-spacing="2"
             transform="skewX(-10)"
           >
-            BOUR
+            CONTROL
           </text>
         </svg>
       </div>
       <button class="toggle-btn" onclick="toggleSidebar()">☰ MENU</button>
       <ul class="menu">
         <li
-          onclick="showView('view-cad-item', this)"
+          onclick="showView('view-cad-contato', this)"
           class="active"
-          id="menu-cad-item"
+          id="menu-cad-contato"
         >
-          <span class="menu-text">CADASTRO INVENTÁRIO</span>
+          <span class="menu-text">CADASTRO CLIENTE</span>
         </li>
-        <li onclick="showView('view-cad-contato', this)" id="menu-cad-contato">
-          <span class="menu-text">CADASTRO DE CONTATOS</span>
+
+        <li onclick="toggleRestrito(this)" id="menu-restrito-toggle">
+          <span class="menu-text" id="restrito-label">🔒 RESTRITO</span>
         </li>
-        <li onclick="showView('view-base-inv', this)">
-          <span class="menu-text">INVENTÁRIO</span>
-        </li>
-        <li onclick="showView('view-base-contatos', this)">
-          <span class="menu-text">CONTATOS</span>
-        </li>
+
+        <div id="submenu-restrito" class="submenu">
+          <li onclick="showView('view-cad-item', this)" id="menu-cad-item">
+            <span class="menu-text">ADD INVENTÁRIO</span>
+          </li>
+          <li onclick="showView('view-base-inv', this)">
+            <span class="menu-text">BASE INVENTÁRIO</span>
+          </li>
+          <li onclick="showView('view-base-contatos', this)">
+            <span class="menu-text">BASE CONTATOS</span>
+          </li>
+        </div>
       </ul>
     </div>
 
     <div class="main-content">
-      <div id="view-cad-item" class="view active">
+      <div id="view-cad-contato" class="view active">
+        <h2 id="title-contato">Dados Pessoais</h2>
+        <form id="form-contato" onsubmit="salvarDados(event, 'contato')">
+          <input type="hidden" name="action" id="action-contato" value="add" />
+          <input type="hidden" name="rowIndex" id="rowIndex-contato" value="" />
+
+          <div class="form-stack">
+            <div class="form-group">
+              <label>Nome Completo</label
+              ><input
+                type="text"
+                name="nome_cliente"
+                placeholder="Digite o nome..."
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Telefone</label
+              ><input
+                type="text"
+                name="telefone"
+                placeholder="(XX) 00000-0000"
+              />
+            </div>
+            <div class="form-group">
+              <label>E-mail</label
+              ><input
+                type="email"
+                name="email"
+                placeholder="email@exemplo.com"
+              />
+            </div>
+            <div class="form-group">
+              <label>Instagram</label
+              ><input type="text" name="instagram" placeholder="@usuario" />
+            </div>
+            <div class="form-group">
+              <label>CPF</label
+              ><input type="text" name="cpf" placeholder="000.000.000-00" />
+            </div>
+            <div class="form-group">
+              <label>Endereço</label
+              ><input
+                type="text"
+                name="endereco"
+                placeholder="Rua, Número, Bairro, Cidade"
+              />
+            </div>
+            <div class="form-group">
+              <label>Profissão</label
+              ><input
+                type="text"
+                name="profissao"
+                placeholder="Ex: Fotógrafo, Modelo, Maquiador"
+              />
+            </div>
+            <div class="form-group">
+              <label>Locação</label
+              ><input
+                type="text"
+                name="locacao"
+                placeholder="Onde a produção acontece?"
+              />
+            </div>
+            <div class="form-group">
+              <label>Data</label
+              ><input
+                type="text"
+                name="data"
+                placeholder="DD/MM/AAAA"
+                onfocus="(this.type='date')"
+                onblur="(this.type='text')"
+              />
+            </div>
+            <div class="form-group">
+              <label>Assistente</label
+              ><input
+                type="text"
+                name="assistente"
+                placeholder="Nome do assistente"
+              />
+            </div>
+            <div class="form-group">
+              <label>Maquiagem</label
+              ><input
+                type="text"
+                name="maquiagem"
+                placeholder="Responsável ou estilo"
+              />
+            </div>
+            <div class="form-group">
+              <label>Cabelo</label
+              ><input
+                type="text"
+                name="cabelo"
+                placeholder="Responsável ou estilo"
+              />
+            </div>
+            <div class="form-group">
+              <label>Figurino</label
+              ><input
+                type="text"
+                name="figurino"
+                placeholder="Detalhes do figurino"
+              />
+            </div>
+            <div class="form-group">
+              <label>Produto</label
+              ><input
+                type="text"
+                name="produto"
+                placeholder="O que está sendo produzido?"
+              />
+            </div>
+            <div class="form-group">
+              <label>Orçamento</label
+              ><input type="text" name="orcamento" placeholder="R$ 0,00" />
+            </div>
+            <div class="form-group">
+              <label>Pago</label
+              ><input
+                type="text"
+                name="pago"
+                placeholder="SIM / NÃO / PARCIAL"
+              />
+            </div>
+            <div class="form-group">
+              <label>Idade</label
+              ><input type="number" name="idade" placeholder="Apenas números" />
+            </div>
+            <div class="form-group">
+              <label>Altura</label
+              ><input type="text" name="altura" placeholder="Ex: 1.75m" />
+            </div>
+            <div class="form-group">
+              <label>Tipo Físico</label
+              ><input
+                type="text"
+                name="tipo_fisico"
+                placeholder="Magra, atlética, plus size..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Etnia</label
+              ><input
+                type="text"
+                name="etnia"
+                placeholder="Branca, Negra, Asiática..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Cor do Cabelo</label
+              ><input
+                type="text"
+                name="cor_cabelo"
+                placeholder="Loiro, castanho, ruivo..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Cor dos Olhos</label
+              ><input
+                type="text"
+                name="cor_olhos"
+                placeholder="Castanho, azul, verde..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Cidade Natal</label
+              ><input
+                type="text"
+                name="cidade_natal"
+                placeholder="Onde nasceu"
+              />
+            </div>
+            <div class="form-group">
+              <label>Estilo</label
+              ><input
+                type="text"
+                name="estilo"
+                placeholder="Urbano, casual, punk..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Contato Extra</label
+              ><input
+                type="text"
+                name="contato_extra"
+                placeholder="Nome / Telefone de emergência"
+              />
+            </div>
+          </div>
+          <button type="submit" class="btn-submit" id="btn-submit-contato">
+            ENVIAR DADOS
+          </button>
+          <button
+            type="button"
+            class="btn-submit btn-cancel"
+            id="btn-cancel-contato"
+            onclick="cancelarEdicao('contato')"
+          >
+            CANCELAR EDIÇÃO
+          </button>
+        </form>
+      </div>
+
+      <div id="view-cad-item" class="view">
         <h2 id="title-item">Cadastro Inventário</h2>
         <form id="form-item" onsubmit="salvarDados(event, 'item')">
           <input type="hidden" name="action" id="action-item" value="add" />
@@ -516,32 +773,71 @@
 
           <div class="form-stack">
             <div class="form-group">
-              <input type="text" name="objeto" placeholder="OBJETO" required />
+              <label>Objeto</label
+              ><input
+                type="text"
+                name="objeto"
+                placeholder="Ex: Lente 50mm, Tripé, Cabo..."
+                required
+              />
             </div>
             <div class="form-group">
-              <input type="text" name="marca" placeholder="MARCA" />
+              <label>Marca</label
+              ><input
+                type="text"
+                name="marca"
+                placeholder="Ex: Sony, Canon, Godox..."
+              />
             </div>
             <div class="form-group">
-              <input type="text" name="categoria" placeholder="CATEGORIA" />
+              <label>Categoria</label
+              ><input
+                type="text"
+                name="categoria"
+                placeholder="Ex: Fotografia, Iluminação, Cabos..."
+              />
             </div>
             <div class="form-group">
-              <input type="text" name="estante" placeholder="ESTANTE" />
+              <label>Estante</label
+              ><input
+                type="text"
+                name="estante"
+                placeholder="Local de armazenamento (Ex: Estante 1)"
+              />
             </div>
             <div class="form-group">
-              <input type="text" name="caixa" placeholder="CAIXA" />
+              <label>Caixa</label
+              ><input
+                type="text"
+                name="caixa"
+                placeholder="Número ou nome da caixa"
+              />
             </div>
             <div class="form-group">
-              <input type="number" name="quantidade" placeholder="QUANTIDADE" />
+              <label>Quantidade</label
+              ><input
+                type="number"
+                name="quantidade"
+                placeholder="Apenas números"
+              />
             </div>
             <div class="form-group">
+              <label>Funciona?</label>
               <select name="funciona" required defaultValue="">
-                <option value="" disabled selected>FUNCIONA?</option>
+                <option value="" disabled selected>
+                  Selecione uma opção...
+                </option>
                 <option value="SIM">SIM</option>
                 <option value="NÃO">NÃO</option>
               </select>
             </div>
             <div class="form-group">
-              <input type="text" name="total" placeholder="TOTAL" />
+              <label>Total em R$</label
+              ><input
+                type="text"
+                name="total"
+                placeholder="Valor total estimado"
+              />
             </div>
           </div>
           <button type="submit" class="btn-submit" id="btn-submit-item">
@@ -558,125 +854,8 @@
         </form>
       </div>
 
-      <div id="view-cad-contato" class="view">
-        <h2 id="title-contato">Dados Pessoais</h2>
-        <form id="form-contato" onsubmit="salvarDados(event, 'contato')">
-          <input type="hidden" name="action" id="action-contato" value="add" />
-          <input type="hidden" name="rowIndex" id="rowIndex-contato" value="" />
-
-          <div class="form-stack">
-            <div class="form-group">
-              <input
-                type="text"
-                name="nome_cliente"
-                placeholder="NOME CLIENTE"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <input type="text" name="telefone" placeholder="TELEFONE" />
-            </div>
-            <div class="form-group">
-              <input type="email" name="email" placeholder="EMAIL" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="instagram" placeholder="INSTAGRAM" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="cpf" placeholder="CPF" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="endereco" placeholder="ENDEREÇO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="profissao" placeholder="PROFISSÃO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="locacao" placeholder="LOCAÇÃO" />
-            </div>
-            <div class="form-group">
-              <input
-                type="text"
-                name="data"
-                placeholder="DATA (DD/MM/AAAA)"
-                onfocus="(this.type='date')"
-                onblur="(this.type='text')"
-              />
-            </div>
-            <div class="form-group">
-              <input type="text" name="assistente" placeholder="ASSISTENTE" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="maquiagem" placeholder="MAQUIAGEM" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="cabelo" placeholder="CABELO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="figurino" placeholder="FIGURINO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="produto" placeholder="PRODUTO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="orcamento" placeholder="ORÇAMENTO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="pago" placeholder="PAGO (SIM/NÃO)" />
-            </div>
-            <div class="form-group">
-              <input type="number" name="idade" placeholder="IDADE" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="altura" placeholder="ALTURA" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="tipo_fisico" placeholder="TIPO FÍSICO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="etnia" placeholder="ETNIA" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="cor_cabelo" placeholder="COR CABELO" />
-            </div>
-            <div class="form-group">
-              <input type="text" name="cor_olhos" placeholder="COR OLHOS" />
-            </div>
-            <div class="form-group">
-              <input
-                type="text"
-                name="cidade_natal"
-                placeholder="CIDADE NATAL"
-              />
-            </div>
-            <div class="form-group">
-              <input type="text" name="estilo" placeholder="ESTILO" />
-            </div>
-            <div class="form-group">
-              <input
-                type="text"
-                name="contato_extra"
-                placeholder="CONTATO EXTRA"
-              />
-            </div>
-          </div>
-          <button type="submit" class="btn-submit" id="btn-submit-contato">
-            CADASTRAR CLIENTE
-          </button>
-          <button
-            type="button"
-            class="btn-submit btn-cancel"
-            id="btn-cancel-contato"
-            onclick="cancelarEdicao('contato')"
-          >
-            CANCELAR EDIÇÃO
-          </button>
-        </form>
-      </div>
-
       <div id="view-base-inv" class="view" style="max-width: 1000px">
         <h2>Base de Dados - Inventário</h2>
-
         <input
           type="text"
           class="search-bar"
@@ -767,69 +946,71 @@
           placeholder="Buscar: Modelo ; Produtor ; -São Paulo"
           onkeyup="filtrarContatos()"
         />
-
         <div class="card-grid" id="card-container-contatos"></div>
       </div>
     </div>
 
     <script>
-      // COLE A SUA NOVA URL DO APPS SCRIPT AQUI (Substitui todos os outros links)
+      // URL DO SEU APPS SCRIPT
       const URL_API =
         "https://script.google.com/macros/s/AKfycbwtdHw5evoSQ76H0tO0kNzIV5pG2RKm1qlpAPxnajCxtNUXgECLkVb4TvS83JU0e7-o0w/exec";
 
       let dadosBrutosInv = [];
       let dadosBrutosContatos = [];
-      let dadosCarregados = false; // Controle de segurança
+      let acessoLiberado = false; // Controle global de segurança
 
       function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("collapsed");
       }
 
-      async function showView(viewId, elementClicked) {
-        // Trava de segurança ao clicar nas bases de dados
-        if (
-          (viewId === "view-base-inv" || viewId === "view-base-contatos") &&
-          !dadosCarregados
-        ) {
-          let senha = prompt(
-            "ACESSO RESTRITO\nDigite a senha para descriptografar os dados:"
-          );
-          if (!senha) return; // Se cancelar, não faz nada
+      // Nova Lógica de Autenticação pelo Submenu
+      async function toggleRestrito(elementClicked) {
+        let submenu = document.getElementById("submenu-restrito");
+        let labelText = document.getElementById("restrito-label");
 
-          let btnText = elementClicked.querySelector(".menu-text").innerText;
-          elementClicked.querySelector(".menu-text").innerText =
-            "AUTENTICANDO...";
-
-          try {
-            // Pede os dados para o Apps Script enviando a senha
-            let response = await fetch(
-              URL_API + "?senha=" + encodeURIComponent(senha)
-            );
-            let json = await response.json();
-
-            if (json.erro) {
-              alert(json.erro);
-              elementClicked.querySelector(".menu-text").innerText = btnText;
-              return; // Senha errada, aborta a abertura da tela
-            }
-
-            // Senha correta! Salva os dados na memória do navegador
-            dadosBrutosInv = json.inventario;
-            dadosBrutosContatos = json.contatos;
-            dadosCarregados = true;
-
-            renderizarInventario();
-            renderizarContatos();
-            gerarFiltrosCheckbox();
-          } catch (e) {
-            alert("Erro de conexão. Tente novamente.");
-            elementClicked.querySelector(".menu-text").innerText = btnText;
-            return;
-          }
-          elementClicked.querySelector(".menu-text").innerText = btnText;
+        if (acessoLiberado) {
+          submenu.style.display =
+            submenu.style.display === "none" ? "flex" : "none";
+          return;
         }
 
-        // Lógica normal de troca de tela
+        let senha = prompt(
+          "ACESSO RESTRITO\nDigite a senha para descriptografar os dados do sistema:"
+        );
+        if (!senha) return;
+
+        let btnTextOriginal = labelText.innerText;
+        labelText.innerText = "AUTENTICANDO...";
+
+        try {
+          let response = await fetch(
+            URL_API + "?senha=" + encodeURIComponent(senha)
+          );
+          let json = await response.json();
+
+          if (json.erro) {
+            alert(json.erro);
+            labelText.innerText = btnTextOriginal;
+            return;
+          }
+
+          dadosBrutosInv = json.inventario;
+          dadosBrutosContatos = json.contatos;
+          acessoLiberado = true;
+
+          renderizarInventario();
+          renderizarContatos();
+          gerarFiltrosCheckbox();
+
+          labelText.innerText = "🔓 RESTRITO";
+          submenu.style.display = "flex";
+        } catch (e) {
+          alert("Erro de conexão. Tente novamente.");
+          labelText.innerText = btnTextOriginal;
+        }
+      }
+
+      function showView(viewId, elementClicked) {
         document
           .querySelectorAll(".view")
           .forEach((v) => v.classList.remove("active"));
@@ -839,6 +1020,14 @@
           .querySelectorAll(".menu li")
           .forEach((li) => li.classList.remove("active"));
         if (elementClicked) elementClicked.classList.add("active");
+
+        if (
+          acessoLiberado &&
+          (viewId === "view-base-inv" || viewId === "view-base-contatos")
+        ) {
+          if (viewId === "view-base-inv") aplicarFiltrosInv();
+          if (viewId === "view-base-contatos") filtrarContatos();
+        }
       }
 
       function toggleCol(checkbox, colIndex) {
@@ -852,15 +1041,12 @@
         headerElement.parentElement.classList.toggle("expanded");
       }
 
-      // --- LÓGICA DE RENDERIZAÇÃO E FILTROS (MANTIDA IGUAL, MAS SEPARADA) ---
-
       function renderizarInventario() {
         let tbodyInv = document.getElementById("tbody-inv");
         tbodyInv.innerHTML = "";
         for (let i = 1; i < dadosBrutosInv.length; i++) {
           let row = dadosBrutosInv[i];
           if (row.join("").trim() !== "") {
-            // Converte para string para garantir a busca correta
             let allRowData = row.map((v) => String(v).toLowerCase()).join(" ");
             let rowIndex = i + 1;
 
@@ -873,19 +1059,19 @@
             ).toLowerCase()}" data-caixa="${String(
               row[4] || ""
             ).toLowerCase()}">
-                      <td>${row[0] || ""}</td> <td class="col-1">${
+                        <td>${row[0] || ""}</td> <td class="col-1">${
               row[1] || ""
             }</td> <td class="col-2">${row[2] || ""}</td>
-                      <td class="col-3">${
-                        row[3] || ""
-                      }</td> <td class="col-4">${
+                        <td class="col-3">${
+                          row[3] || ""
+                        }</td> <td class="col-4">${
               row[4] || ""
             }</td> <td class="col-5">${row[5] || ""}</td>
-                      <td class="col-6">${
-                        row[6] || ""
-                      }</td> <td class="col-7">${row[7] || ""}</td>
-                      <td><button onclick="prepararEdicao('item', ${i}, ${rowIndex})">Editar</button></td>
-                  </tr>`;
+                        <td class="col-6">${
+                          row[6] || ""
+                        }</td> <td class="col-7">${row[7] || ""}</td>
+                        <td><button onclick="prepararEdicao('item', ${i}, ${rowIndex})">Editar</button></td>
+                    </tr>`;
           }
         }
       }
@@ -934,20 +1120,20 @@
             }
 
             container.innerHTML += `
-                  <div class="card" data-search="${allRowData}">
-                      <div class="card-header" onclick="toggleCard(this)">
-                          <div class="card-title">${r[0] || "Sem Nome"}</div>
-                          <div class="card-info">📸 ${r[3] || "N/A"}</div>
-                          <div class="card-info">📞 ${r[1] || "N/A"}</div>
-                          <div class="card-info">💼 ${r[6] || "N/A"}</div>
-                      </div>
-                      <div class="card-body">
-                          ${detalhesHTML}
-                          <div class="card-actions">
-                              <button class="btn-edit" onclick="prepararEdicao('contato', ${i}, ${rowIndex})">✎ Editar Ficha</button>
-                          </div>
-                      </div>
-                  </div>`;
+                    <div class="card" data-search="${allRowData}">
+                        <div class="card-header" onclick="toggleCard(this)">
+                            <div class="card-title">${r[0] || "Sem Nome"}</div>
+                            <div class="card-info">📸 ${r[3] || "N/A"}</div>
+                            <div class="card-info">📞 ${r[1] || "N/A"}</div>
+                            <div class="card-info">💼 ${r[6] || "N/A"}</div>
+                        </div>
+                        <div class="card-body">
+                            ${detalhesHTML}
+                            <div class="card-actions">
+                                <button class="btn-edit" onclick="prepararEdicao('contato', ${i}, ${rowIndex})">✎ Editar Ficha</button>
+                            </div>
+                        </div>
+                    </div>`;
           }
         }
       }
@@ -962,6 +1148,7 @@
         let negatives = terms
           .filter((t) => t.startsWith("-"))
           .map((t) => t.substring(1));
+
         let getChecked = (name) =>
           Array.from(
             document.querySelectorAll(`input[name="${name}"]:checked`)
@@ -1094,6 +1281,7 @@
           "view-cad-" + tipo,
           document.getElementById("menu-cad-" + tipo)
         );
+
         document.getElementById("action-" + tipo).value = "edit";
         document.getElementById("rowIndex-" + tipo).value = rowIndexPlanilha;
         document.getElementById("title-" + tipo).innerText = "EDITAR DADOS";
@@ -1152,7 +1340,6 @@
           ];
           campos.forEach((nomeCampo, idx) => {
             let valor = rowData[idx] || "";
-            // Correção para formato de data, se houver
             if (nomeCampo === "data" && valor) valor = valor.split("T")[0];
             if (form.elements[nomeCampo])
               form.elements[nomeCampo].value = valor;
@@ -1167,7 +1354,7 @@
         document.getElementById("title-" + tipo).innerText =
           tipo === "item" ? "Cadastro Inventário" : "Dados Pessoais";
         document.getElementById("btn-submit-" + tipo).innerText =
-          tipo === "item" ? "CADASTRAR ITEM" : "CADASTRAR CLIENTE";
+          tipo === "item" ? "CADASTRAR ITEM" : "ENVIAR DADOS";
         document.getElementById("btn-cancel-" + tipo).style.display = "none";
       }
 
@@ -1191,10 +1378,18 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dados),
           });
-          alert("Salvo com sucesso!");
+          alert(
+            dados.action === "edit"
+              ? "Edição salva com sucesso!"
+              : "Cadastro salvo com sucesso!"
+          );
           cancelarEdicao(tipo);
-          // Força a recarga dos dados na próxima vez que abrir a aba para ver as atualizações
-          dadosCarregados = false;
+
+          if (dados.action === "edit") {
+            acessoLiberado = false;
+            document.getElementById("submenu-restrito").style.display = "none";
+            document.getElementById("restrito-label").innerText = "🔒 RESTRITO";
+          }
         } catch (e) {
           alert("Erro ao salvar. Verifique o console.");
         }
